@@ -1,6 +1,6 @@
 from typing import Union
 
-from fastapi import FastAPI, File, Form, Query,UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, Query,UploadFile
 from enum import Enum
 from pydantic import BaseModel
 
@@ -106,4 +106,33 @@ def file_length(file:bytes = File()):
 
 @app.post("/uploadfile/")
 async def create_upload_file(file: UploadFile):
-    return {"filename": file.seek(0)}
+    return {"filename": file}
+
+@app.post("/file_name/")
+async def file_name(file: UploadFile):
+    return {"filename": file.filename}
+
+# mixed one ==========================
+
+@app.post("/file/fileUplad/file_name")
+def file_data(file_name : UploadFile,file_size:bytes=File(),name :str =Form()):
+    return {"fileName": file_name.filename,"file_size": len(file_size),"name ": name}
+
+
+# +++++++++ERROR HANDLING++++++++++++++
+
+items = {"foo": "The Foo Wrestlers","this":"This","thddsjvkj":"djkfs"}
+
+
+@app.get("/items/{item_id}")
+async def read_item(item_id: str):
+    if item_id not in items:
+        return HTTPException(status_code=404, detail="Item not found hea",headers="df")
+    return {"item": items[item_id]}
+
+
+@app.get("/items/get/f")
+def read_time(items1:str):
+    if items1 not in items:
+        return HTTPException(status_code=400,detail="not there")
+    return "found"
