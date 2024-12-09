@@ -1,12 +1,11 @@
 from typing import Union
 
-from fastapi import FastAPI
-
+from fastapi import FastAPI, File, Form, Query,UploadFile
 from enum import Enum
 from pydantic import BaseModel
 
 class Schema1(BaseModel):
-    name : str
+    name : str 
     roll_no : int 
     mob_no : int | None = None
     price : float
@@ -56,7 +55,7 @@ def fun3(Item:int ,name: Union[float,int,None]=None):          #Union which mean
 
 
 @app.get("/query")
-def query_fun(name:str ,usn:Union[int,None]=None):
+def query_fun(name:str ,usn:Union[str,None]=Query(default =None, min_length=3,max_length=4)):
     var = {"name": name,"usn":usn}
     return (var)
 
@@ -83,6 +82,28 @@ async def get_model(model_name: ModelName):
     # BASEMODEL=======================
 
 
-@app.post("/demo")
+@app.post("/demo/main")
 def create_item(item:Schema1):
     return item
+
+
+@app.post("/form")
+def form(name:str = Form() , paasword :int =Form()):
+    return {"name": name , "paasword" : paasword}
+
+
+@app.post("/form/")
+def form1(name : Schema1):
+    print("faris")
+    return name
+
+# =============file upload===========
+@app.post("/file/size")
+def file_length(file:bytes = File()):
+    return {"file_size":len(file)}
+
+# ==========UPLOAD FILE ===================
+
+@app.post("/uploadfile/")
+async def create_upload_file(file: UploadFile):
+    return {"filename": file.seek(0)}
