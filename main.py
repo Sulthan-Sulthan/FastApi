@@ -46,3 +46,9 @@ def fun3(Item:int ,name: Union[float,int,None]=None):          #Union which mean
 @app.get("/class/{detail}")
 def enum1(detail:Detail):
     return (detail)
+
+
+    
+@app.get("/class/{detail}")
+def enum1(detail:Detail):
+    return (detail)
