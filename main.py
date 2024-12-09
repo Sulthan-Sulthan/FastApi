@@ -3,11 +3,21 @@ from typing import Union
 from fastapi import FastAPI
 
 from enum import Enum
+from pydantic import BaseModel
 
-class Detail(str, Enum):
-    name = "FARIS"
-    roll_no = "45"
-    company = "Raasoft"
+class Schema1(BaseModel):
+    name : str
+    roll_no : int 
+    mob_no : int | None = None
+    price : float
+    tax: float | None = None
+
+
+class ModelName(str, Enum):
+    alexnet = "alexnet"
+    resnet = "resnet"
+    lenet = "lenet"
+
 
 
 app = FastAPI()
@@ -42,13 +52,37 @@ def fun3(Item:int ,name: Union[float,int,None]=None):          #Union which mean
     var_names = {"path variable": Item,"NAME":name}
     return (var_names)
 
-
-@app.get("/class/{detail}")
-def enum1(detail:Detail):
-    return (detail)
+# ============QUERY PARAMETER===================
 
 
-    
-@app.get("/class/{detail}")
-def enum1(detail:Detail):
-    return (detail)
+@app.get("/query")
+def query_fun(name:str ,usn:Union[int,None]=None):
+    var = {"name": name,"usn":usn}
+    return (var)
+
+
+# @app.get("/class/{detail}")
+# def enum1(detail:Detail):
+#     return (detail)
+
+
+
+
+@app.get("/models/{model_name}")
+async def get_model(model_name: ModelName):
+    if model_name.value == "alexnet":
+        return {"model_name": model_name, "message": "Deep Learning FTW!"}
+
+    if model_name.value == "lenet":
+        return {"model_name": model_name, "message": "LeCNN all the images"}
+
+    return {"model_name": model_name, "message": "Have some residuals"}
+
+
+
+    # BASEMODEL=======================
+
+
+@app.post("/demo")
+def create_item(item:Schema1):
+    return item
