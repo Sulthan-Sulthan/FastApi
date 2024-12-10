@@ -87,6 +87,7 @@ def create_item(item:Schema1):
     return item
 
 
+# +++++
 @app.post("/form")
 def form(name:str = Form() , paasword :int =Form()):
     return {"name": name , "paasword" : paasword}
@@ -118,8 +119,7 @@ async def file_name(file: UploadFile):
 def file_data(file_name : UploadFile,file_size:bytes=File(),name :str =Form()):
     return {"fileName": file_name.filename,"file_size": len(file_size),"name ": name}
 
-
-# +++++++++ERROR HANDLING++++++++++++++
+# print("dsj")++++ERROR HANDLING++++++++++++++
 
 items = {"foo": "The Foo Wrestlers","this":"This","thddsjvkj":"djkfs"}
 
