@@ -1,6 +1,8 @@
 from typing import Union
-
-from fastapi import FastAPI, File, Form, HTTPException, Query,UploadFile
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from fastapi import FastAPI, File, Form, HTTPException, Query,UploadFile,Request
 from enum import Enum
 from pydantic import BaseModel
 
@@ -131,8 +133,17 @@ async def read_item(item_id: str):
     return {"item": items[item_id]}
 
 
-@app.get("/items/get/f")
+@app.get("/items/get/fetch")
 def read_time(items1:str):
     if items1 not in items:
         return HTTPException(status_code=400,detail="not there")
     return "found"
+
+
+
+templates = Jinja2Templates(directory="templates")
+# app.mount("/", StaticFiles(directory="/"))
+
+@app.get("/html/get" ,)
+def serve_home(request:Request,title:str,header:str):
+    return templates.TemplateResponse("index.html",{"request" :request ,"title":title,"header":header} ) 
