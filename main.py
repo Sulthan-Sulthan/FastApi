@@ -142,8 +142,11 @@ def read_time(items1:str):
 
 
 templates = Jinja2Templates(directory="templates")
-# app.mount("/", StaticFiles(directory="/"))
+app.mount("/static", StaticFiles(directory="static"))
 
 @app.get("/html/get" ,)
 def serve_home(request:Request,title:str,header:str):
-    return templates.TemplateResponse("index.html",{"request" :request ,"title":title,"header":header} ) 
+    # print(type(title))
+    # print(type(header))
+    return templates.TemplateResponse("index.html",{"request" :request,"title":title,"header":header} )
+ 
