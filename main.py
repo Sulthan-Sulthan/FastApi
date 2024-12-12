@@ -1,8 +1,8 @@
-from typing import Union
+from typing import Annotated, Union
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi import FastAPI, File, Form, HTTPException, Query,UploadFile,Request
+from fastapi import Depends, FastAPI, File, Form, HTTPException, Query, Response,UploadFile,Request,Cookie
 from enum import Enum
 from pydantic import BaseModel
 
@@ -150,3 +150,41 @@ def serve_home(request:Request,title:str,header:str):
     # print(type(header))
     return templates.TemplateResponse("index.html",{"request" :request,"title":title,"header":header} )
  
+
+@app.get("/submit-form", response_class=HTMLResponse)
+async def show_form(request:Request ):
+    return templates.TemplateResponse("form.html",{"request" :request} )
+
+
+@app.post("/submit-form/form")
+async def submit_form(request:Request,name:str=Form(),email:str=Form()):
+    return {"name":name,"email":email}
+
+
+
+# +++++++++++++++cokie+=============
+
+
+@app.get("/set/cookies/")
+async def set_cookie(response : Response):
+    response.set_cookie(key="faris",value="raasoft")
+    return {"message": "cookies set successful"}
+
+
+# ===========get cookies===========
+
+@app.get("/get/cookies/")
+async def get_cookie(request:Request):
+    value = request.cookies.get("faris")
+    return {"cookie":value}
+
+def get_dependiecies_db():
+    return "fake one "
+
+def get_fun():
+    return "real one"
+
+
+@app.get("/dependicies")
+async def deapendecies(db:str=Depends(get_dependiecies_db),current_user:str=Depends(get_fun)):
+    return {"db_connection":db,"current_user":current_user}
