@@ -6,11 +6,13 @@ c = CamelCase()
 
 class Sql_operation:
     def __init__(self):
-         self.conn = psycopg2.connect(database="postgres",
+        self.conn = psycopg2.connect(database="postgres",
                         host="localhost",
                         user="postgres",
                         password="postgreDB@900",
                         port="5432")
+    def close(self):
+        self.conn.close()
         
     def creating_table(self):
         
@@ -28,28 +30,97 @@ class Sql_operation:
         self.conn.commit()
 
 
-    def inserting_values(self):
+    def inserting_values(self,id,name,salary,dept_name ):
         cursor = self.conn.cursor()
-        namedict = ({ "ID":1,"NAME":"Joshua", "SALARY":2000 ,"DEPT_NAME":"DP1"},
-                    {"ID":2, "NAME":"Steven", "SALARY":4000 ,"DEPT_NAME":"DP2"},
-                    {"ID":3, "NAME":"David", "SALARY":6000 ,"DEPT_NAME":"DP3"})
-    
+        namedict = ({ "ID":id,"NAME":name, "SALARY":salary ,"DEPT_NAME":dept_name},)
+        
         cursor.executemany("""INSERT INTO NEW_TABLE(ID, NAME,SALARY,DEPT_NAME) VALUES (%(ID)s, %(NAME)s , %(SALARY)s , %(DEPT_NAME)s)""", namedict)
+        
         self.conn.commit()
 
     def update(self,name):
         c.hump(name)
         cursor = self.conn.cursor()
-        id_dict = { "ID":2}
-        query = "UPDATE new_table SET name = %(name)s WHERE id = %(ID)s"
+        id_dict = { "ID":1, "name":name ,  "dept_name":"DP4"}
+        query = "UPDATE new_table SET name = %(name)s ,DEPT_NAME= %(dept_name)s WHERE id = %(ID)s "
         cursor.execute(query, id_dict)
         self.conn.commit()
 
+    def delete(self,id):
+        id_delete ={"id":id}
+        cursor = self.conn.cursor()
+        delete_query = """delete from new_table where id = %(id)s"""
+        cursor.execute(delete_query,id_delete)
+        self.conn.commit()
     
+  
 demo =Sql_operation()
 demo.creating_table()
-demo.inserting_values()
+demo.inserting_values(1,"faris",2000,"DP1")
+demo.inserting_values(2,"faris",2000,"DP1")
 demo.update("faris")
+demo.delete(3)
+demo.close()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -112,72 +183,6 @@ demo.update("faris")
 
 # conn.commit()
         
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
