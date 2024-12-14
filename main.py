@@ -5,6 +5,8 @@ from fastapi.templating import Jinja2Templates
 from fastapi import Depends, FastAPI, File, Form, HTTPException, Query, Response,UploadFile,Request,Cookie
 from enum import Enum
 from pydantic import BaseModel
+from new import Sql_operation 
+
 
 class Schema1(BaseModel):
     name : str 
@@ -18,6 +20,13 @@ class ModelName(str, Enum):
     alexnet = "alexnet"
     resnet = "resnet"
     lenet = "lenet"
+
+
+class Values_Inserting(BaseModel):
+    id: int
+    name:str
+    salary:int
+    dept_name:str
 
 
 
@@ -188,3 +197,46 @@ def get_fun():
 @app.get("/dependicies")
 async def deapendecies(db:str=Depends(get_dependiecies_db),current_user:str=Depends(get_fun)):
     return {"db_connection":db,"current_user":current_user}
+
+
+
+db = Sql_operation()
+@app.on_event("startup")
+async def startup_event():
+    db.creating_table()
+
+
+
+
+
+
+
+@app.post("/items/", status_code=201)
+async def create_data(item: Values_Inserting):
+    try:
+        db.inserting_values(item.id,item.name,item.salary,item.dept_name)
+        return { "message": "Item created successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+
+
+
+
+
+@app.put("/items2152")
+async def update(name:str):
+    try:
+        db.update(name)
+        return {"message": "Item updated successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.delete("/items/delete/{item_id}")
+async def delete_item(item_id: int):
+    try:
+        db.delete(item_id)
+        return {"message": f"Item {item_id} deleted successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
