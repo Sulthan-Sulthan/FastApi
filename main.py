@@ -1,7 +1,7 @@
 from typing import Annotated, Union
 from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
+# from fastapi.staticfiles import StaticFiles
+# from fastapi.templating import Jinja2Templates
 from fastapi import Depends, FastAPI, File, Form, HTTPException, Query, Response,UploadFile,Request,Cookie
 from enum import Enum
 from pydantic import BaseModel
@@ -150,19 +150,19 @@ def read_time(items1:str):
 
 
 
-templates = Jinja2Templates(directory="templates")
-app.mount("/static", StaticFiles(directory="static"))
+# templates = Jinja2Templates(directory="templates")
+# app.mount("/static", StaticFiles(directory="static"))
 
-@app.get("/html/get" ,)
-def serve_home(request:Request,title:str,header:str):
-    # print(type(title))
-    # print(type(header))
-    return templates.TemplateResponse("index.html",{"request" :request,"title":title,"header":header} )
+# @app.get("/html/get" ,)
+# def serve_home(request:Request,title:str,header:str):
+#     # print(type(title))
+#     # print(type(header))
+#     return templates.TemplateResponse("index.html",{"request" :request,"title":title,"header":header} )
  
 
-@app.get("/submit-form", response_class=HTMLResponse)
-async def show_form(request:Request ):
-    return templates.TemplateResponse("form.html",{"request" :request} )
+# @app.get("/submit-form", response_class=HTMLResponse)
+# async def show_form(request:Request ):
+#     return templates.TemplateResponse("form.html",{"request" :request} )
 
 
 @app.post("/submit-form/form")
@@ -171,7 +171,7 @@ async def submit_form(request:Request,name:str=Form(),email:str=Form()):
 
 
 
-# +++++++++++++++cokie+=============
+# +++++++++++++++cookie+=============
 
 
 @app.get("/set/cookies/")
