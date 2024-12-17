@@ -1,94 +1,133 @@
 from typing import Annotated
-
-from fastapi import Depends, FastAPI, HTTPException, status
+import time
+from fastapi import Depends, FastAPI, HTTPException, status,BackgroundTasks
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
+from fastapi.security import OAuth2AuthorizationCodeBearer ,OAuth2PasswordRequestForm
 
-fake_users_db = {
-    "johndoe": {
-        "username": "johndoe",
-        "full_name": "John Doe",
-        "email": "johndoe@example.com",
-        "hashed_password": "fakehashedsecret",
-        "disabled": False,
-    },
-    "alice": {
-        "username": "alice",
-        "full_name": "Alice Wonderson",
-        "email": "alice@example.com",
-        "hashed_password": "fakehashedsecret2",
-        "disabled": True,
-    },
-}
 
 app = FastAPI()
+outh_scheme = OAuth2PasswordBearer(tokenUrl="token")
+def email_sent(email:str , data:str):
+    print(email)
+    print(data)
+    for i in range(100):
+        print(i)
+        time.sleep(0.1)
 
 
-def fake_hash_password(password: str):
-    return "fakehashed" + password
+@app.get("/handle/email")
+async def handle_email(email:str ,background:BackgroundTasks):
+    print(email)
+    background.add_task(email_sent,email,"mesage")
+    return {"message :" "mail sent"}
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-
-class User(BaseModel):
-    username: str
-    email: str | None = None
-    full_name: str | None = None
-    disabled: bool | None = None
-
-
-class UserInDB(User):
-    hashed_password: str
-
-
-def get_user(db, username: str):
-    if username in db:
-        user_dict = db[username]
-        return UserInDB(**user_dict)
-
-
-def fake_decode_token(token):
-    # This doesn't provide any security at all
-    # Check the next version
-    user = get_user(fake_users_db, token)
-    return user
-
-
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
-    user = fake_decode_token(token)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid authentication credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    return user
-
-
-async def get_current_active_user(
-    current_user: Annotated[User, Depends(get_current_user)],
-):
-    if current_user.disabled:
-        raise HTTPException(status_code=400, detail="Inactive user")
-    return current_user
 
 
 @app.post("/token")
-async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
-    user_dict = fake_users_db.get(form_data.username)
-    if not user_dict:
-        raise HTTPException(status_code=400, detail="Incorrect username or password")
-    user = UserInDB(**user_dict)
-    hashed_password = fake_hash_password(form_data.password)
-    if not hashed_password == user.hashed_password:
-        raise HTTPException(status_code=400, detail="Incorrect username or password")
-
-    return {"access_token": user.username, "token_type": "bearer"}
+async def generate_token(form_data:OAuth2PasswordRequestForm = Depends()):
+    print(form_data)
+    return {"access_token":form_data.username , "token_type":"bearer"}
 
 
-@app.get("/users/me")
-async def read_users_me(
-    current_user: Annotated[User, Depends(get_current_active_user)],
-):
-    return current_user
+
+
+
+@app.get("/profile")
+async def generate_profile(token :str = Depends(outh_scheme)):
+    print(token)
+    return {
+        "user " : "faris",
+        "PRFILE":"success"
+    }
+
+# fake_users_db = {
+#     "johndoe": {
+#         "username": "johndoe",
+#         "full_name": "John Doe",
+#         "email": "johndoe@example.com",
+#         "hashed_password": "fakehashedsecret",
+#         "disabled": False,
+#     },
+#     "alice": {
+#         "username": "alice",
+#         "full_name": "Alice Wonderson",
+#         "email": "alice@example.com",
+#         "hashed_password": "fakehashedsecret2",
+#         "disabled": True,
+#     },
+# }
+
+# app = FastAPI()
+
+
+# def fake_hash_password(password: str):
+#     return "fakehashed" + password
+
+
+# oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+# class User(BaseModel):
+#     username: str
+#     email: str | None = None
+#     full_name: str | None = None
+#     disabled: bool | None = None
+
+
+# class UserInDB(User):
+#     hashed_password: str
+
+
+# def get_user(db, username: str):
+#     if username in db:
+#         user_dict = db[username]
+#         return UserInDB(**user_dict)
+
+
+# def fake_decode_token(token):
+#     # This doesn't provide any security at all
+#     # Check the next version
+#     user = get_user(fake_users_db, token)
+#     return user
+
+
+# async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+#     user = fake_decode_token(token)
+#     if not user:
+#         raise HTTPException(
+#             status_code=status.HTTP_401_UNAUTHORIZED,
+#             detail="Invalid authentication credentials",
+#             headers={"WWW-Authenticate": "Bearer"},
+#         )
+#     return user
+
+
+# async def get_current_active_user(
+#     current_user: Annotated[User, Depends(get_current_user)],
+# ):
+#     if current_user.disabled:
+#         raise HTTPException(status_code=400, detail="Inactive user")
+#     return current_user
+
+
+# @app.post("/token")
+# async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
+#     user_dict = fake_users_db.get(form_data.username)
+#     if not user_dict:
+#         raise HTTPException(status_code=400, detail="Incorrect username or password")
+#     user = UserInDB(**user_dict)
+#     hashed_password = fake_hash_password(form_data.password)
+#     if not hashed_password == user.hashed_password:
+#         raise HTTPException(status_code=400, detail="Incorrect username or password")
+
+#     return {"access_token": user.username, "token_type": "bearer"}
+
+
+# @app.get("/users/me")
+# async def read_users_me(
+#     current_user: Annotated[User, Depends(get_current_active_user)],
+# ):
+#     return current_user
