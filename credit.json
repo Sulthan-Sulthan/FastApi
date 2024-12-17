@@ -1,0 +1,24 @@
+{
+    "john_doe":{
+        "credit_balance":87236,
+        "credit_paid":827,
+        "credit_rolling":1293
+    },
+    "jane_smith":{
+        "credit_balance":87236,
+        "credit_paid":827,
+        "credit_rolling":1293
+    },
+    "test_user1":{
+        "credit_balance":87236,
+        "credit_paid":827,
+        "credit_rolling":1293
+    },
+    "demo_account":{
+        "credit_balance":87236,
+        "credit_paid":827,
+        "credit_rolling":1293
+    }
+    
+    
+}
