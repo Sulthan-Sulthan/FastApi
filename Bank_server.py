@@ -51,3 +51,20 @@ async def credit(token:str=Depends(oauth_scheme)):
         "username1":token,
         "credit_hist": credit_history_data[token]
     }
+
+@app.post("/credit/transfer")
+async def credit_transfer(token:str =Depends(oauth_scheme), dest_user_name:str = Body(...), ammount:float = Body(...)):
+    print(token)
+    print(dest_user_name)
+    print(ammount)
+
+    with open("userBalance.json","r") as userBalance_file:
+        userBalance_data = json.load(userBalance_file)
+    dest_user_bal = userBalance_data.get(dest_user_name)
+    return dest_user_bal
+
+
+
+    # return userBalance_data.get(token)["current_balance"]
+    
+    
