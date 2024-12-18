@@ -71,9 +71,9 @@ async def credit_transfer(token:str =Depends(oauth_scheme), dest_user_name:str =
         userBalance_data[token]["current_balance"] -= ammount
         userBalance_data[dest_user_name]["current_balance"] += ammount
         with open("userBalance.json" , "w") as userBal_write:
-             userbal_write_data = json.dump(userBalance_data , userBal_write)
-    return {"Detail " : f"ammount {ammount} has been transferred to {dest_user_name} ",
-            "amm":userbal_write_data}
+             json.dump(userBalance_data , userBal_write)
+    return {"Detail " : f"ammount {ammount} has been transferred to {dest_user_name} "
+           }
 
 
 
