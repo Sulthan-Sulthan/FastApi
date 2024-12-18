@@ -1,16 +1,1 @@
-{
-    "john_doe":{
-        "current_balance":200
-    },
-    "jane_smith":{
-        "current_balance":2200
-    },
-    "test_user1":{
-        "current_balance":22200
-    },
-    "demo_account":{
-        "current_balance":222200
-    }
-
-
-}
+{"john_doe": {"current_balance": 600.0}, "jane_smith": {"current_balance": 2800.0}, "test_user1": {"current_balance": 22200}, "demo_account": {"current_balance": 222200}}

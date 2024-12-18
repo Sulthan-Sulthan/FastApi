@@ -54,14 +54,26 @@ async def credit(token:str=Depends(oauth_scheme)):
 
 @app.post("/credit/transfer")
 async def credit_transfer(token:str =Depends(oauth_scheme), dest_user_name:str = Body(...), ammount:float = Body(...)):
-    print(token)
-    print(dest_user_name)
-    print(ammount)
+    # print(token)
+    # print(dest_user_name)
+    # print(ammount)
 
     with open("userBalance.json","r") as userBalance_file:
         userBalance_data = json.load(userBalance_file)
-    dest_user_bal = userBalance_data.get(dest_user_name)
-    return dest_user_bal
+        current_userBalance = userBalance_data.get(token)['current_balance']
+        # print(f"user balance {current_userBalance}")
+        dest_user = userBalance_data.get(dest_user_name)
+        if not dest_user:
+                raise HTTPException(status_code=400, detail=" Destination user not found")
+        dest_user_bal = dest_user["current_balance"]
+        if current_userBalance - ammount < 0:
+             raise HTTPException(status_code=400, detail=" Ammount is not sufficient")
+        userBalance_data[token]["current_balance"] -= ammount
+        userBalance_data[dest_user_name]["current_balance"] += ammount
+        with open("userBalance.json" , "w") as userBal_write:
+             userbal_write_data = json.dump(userBalance_data , userBal_write)
+    return {"Detail " : f"ammount {ammount} has been transferred to {dest_user_name} ",
+            "amm":userbal_write_data}
 
 
 
