@@ -240,3 +240,6 @@ async def delete_item(item_id: int):
         return {"message": f"Item {item_id} deleted successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+
+

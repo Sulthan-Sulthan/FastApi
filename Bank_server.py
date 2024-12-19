@@ -4,6 +4,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 import json
 
 
+
 app = FastAPI()
 
 oauth_scheme = OAuth2PasswordBearer(tokenUrl="token")
